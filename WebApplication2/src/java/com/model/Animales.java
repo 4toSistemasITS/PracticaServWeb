@@ -38,7 +38,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Animales.findByFechaHoraRegistro", query = "SELECT a FROM Animales a WHERE a.fechaHoraRegistro = :fechaHoraRegistro")
     , @NamedQuery(name = "Animales.findByVersion", query = "SELECT a FROM Animales a WHERE a.version = :version")
     , @NamedQuery(name = "Animales.findByEliminado", query = "SELECT a FROM Animales a WHERE a.eliminado = :eliminado")
-    , @NamedQuery(name = "Animales.findByDetalleModificacion", query = "SELECT a FROM Animales a WHERE a.detalleModificacion = :detalleModificacion")})
+    , @NamedQuery(name = "Animales.findByDetalleModificacion", query = "SELECT a FROM Animales a WHERE a.detalleModificacion = :detalleModificacion")
+    , @NamedQuery(name = "Animales.findByUsuario", query = "SELECT a FROM Animales a WHERE a.usuario = :usuario")
+    , @NamedQuery(name = "Animales.findByPassword", query = "SELECT a FROM Animales a WHERE a.password = :password")})
 public class Animales implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,6 +69,12 @@ public class Animales implements Serializable {
     @Size(max = 45)
     @Column(name = "detalle_modificacion")
     private String detalleModificacion;
+    @Size(max = 50)
+    @Column(name = "usuario")
+    private String usuario;
+    @Size(max = 45)
+    @Column(name = "password")
+    private String password;
 
     public Animales() {
     }
@@ -74,6 +82,14 @@ public class Animales implements Serializable {
     public Animales(Integer idAnimal) {
         this.idAnimal = idAnimal;
     }
+
+    public Animales(Boolean eliminado, String usuario, String password) {
+        this.eliminado = eliminado;
+        this.usuario = usuario;
+        this.password = password;
+    }
+    
+    
 
     public Integer getIdAnimal() {
         return idAnimal;
@@ -145,6 +161,22 @@ public class Animales implements Serializable {
 
     public void setDetalleModificacion(String detalleModificacion) {
         this.detalleModificacion = detalleModificacion;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

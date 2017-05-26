@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -88,12 +89,37 @@ public class AnimalesFacadeREST extends AbstractFacade<Animales> {
     @POST
     @Path("consulta")
     @Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_JSON})
-    public List<Animales> consulta(@PathParam("usuario") String valor, @PathParam("contraseña") String valor2){
+    public List<Animales> consulta(@PathParam("usuario") String valor, @PathParam("contraseña") String valor2, @PathParam("extinto") int valor3){
         List<Animales> retorno=null;
         if (valor.equals("angel")&&valor2.equals("1234")){
-            retorno=super.findAll();
+            retorno=consultarExtincion(valor3);
         }
         return retorno;
+    }
+    
+    @POST
+    @Path("login")
+    @Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_JSON})
+    public Animales login(@FormParam("usuario") String usuario, @FormParam("contraseña") String password){
+        Animales u= login1(usuario, password);
+        return u;
+            
+    }
+    ////METODO PARA CREAR UN USUARIO
+    @POST
+    @Path("crear")
+    @Produces({MediaType.APPLICATION_JSON,  MediaType.APPLICATION_JSON})
+    public String crear(@FormParam("usuario") String usuario, @FormParam("contraseña") String password){
+        String mensaje="{\"exitoso\":false}";
+        if(comprobar_usuario(usuario)== null){
+//                try {
+                    create(new Animales(false, usuario, password));
+                    mensaje="{\"exitoso\":se ha creado el usuario}";
+//                } catch (Exception e) {
+//                } 
+        }
+        return mensaje;
+            
     }
  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
     @POST
@@ -139,6 +165,34 @@ public class AnimalesFacadeREST extends AbstractFacade<Animales> {
         }catch(NoResultException e){
            return null; 
         }
+    }
+    
+    public Animales login1(String usuario, String password){
+        Animales u = null;
+        TypedQuery<Animales> qry;
+        qry = getEntityManager().createQuery("SELECT a FROM Animales a WHERE a.usuario = :usuario and a.password = :password and a.eliminado = :eliminado", Animales.class);
+        qry.setParameter("usuario", usuario);
+        qry.setParameter("password", password);
+        qry.setParameter("eliminado", false);
+        try{
+            return qry.getSingleResult();
+        }catch(NoResultException e){
+           return null; 
+        }
+        
+    }
+    
+    public Animales comprobar_usuario(String usuario){
+        Animales u = null;
+        TypedQuery<Animales> qry;
+        qry = getEntityManager().createQuery("SELECT a FROM Animales a WHERE a.usuario = :usuario ", Animales.class);
+        qry.setParameter("usuario", usuario);
+        try{
+            return qry.getSingleResult();
+        }catch(NoResultException e){
+           return null; 
+        }
+        
     }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
